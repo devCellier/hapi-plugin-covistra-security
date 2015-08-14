@@ -25,6 +25,7 @@ module.exports = function(server) {
             }
         }
         else {
+            req.log.debug("Authenticating user %s", req.payload.username);
             // Perform the authentication
             Users.model.authenticate({username: req.payload.username, password: req.payload.password}).then(function(user) {
                 if(user) {

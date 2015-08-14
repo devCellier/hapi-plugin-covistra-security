@@ -19,11 +19,12 @@ var _ = require('lodash');
 
 exports.register = function (server, options, next) {
 
-    server.dependency(['covistra-mongodb'], function(plugin, done) {
+    server.dependency(['covistra-system', 'covistra-mongodb'], function(plugin, done) {
 
         var config = server.plugins['hapi-config'].CurrentConfiguration;
         var log = server.plugins['covistra-system'].systemLog.child({plugin: 'security'});
         var Router = server.plugins['covistra-system'].Router;
+        var resolveDeps = server.plugins['covistra-system'].resolveDeps;
 
         log.debug("Registering the security plugin");
 
@@ -61,6 +62,20 @@ exports.register = function (server, options, next) {
         // Register routes
         Router.routes(server, __dirname, './routes');
 
+        // Lazy plugin resolution to avoid circular dependencies issue
+        resolveDeps('covistra-admin').then(function(adminPlugin) {
+            log.debug("Installing our admin interface");
+
+            // Register our admin interface elements
+            adminPlugin.adminService.registerModule('security-admin', require('./admin/module'));
+
+            log.info("Security Admin interface has been successfully installed");
+
+        }).catch(function() {
+            log.warn("Unable to resolve admin plugin. No interface will be created");
+        });
+
+        //NOTE: Must call done before install the admin as security plugin is a dependency of admin plugin!
         done();
     });
 
