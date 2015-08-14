@@ -12,13 +12,13 @@ module.exports = function(server) {
 
     function handler(req, reply) {
 
+        var ctx = config.get('server:info') || { app_title: 'CMBF', app_name: 'cmbf'};
+
         if(req.method === 'get') {
             if (req.auth.isAuthenticated) {
                 return reply.redirect('/');
             }
             else {
-                var ctx = config.get('server:info') || { app_title: 'CMBF', app_name: 'cmbf'};
-
                 reply.view('login', _.merge(ctx, {
                     target_url: req.query.next
                 }));
@@ -26,20 +26,20 @@ module.exports = function(server) {
         }
         else {
             // Perform the authentication
-            Users.authenticate({username: req.payload.username, password: req.payload.password}).then(function(user) {
+            Users.model.authenticate({username: req.payload.username, password: req.payload.password}).then(function(user) {
                 if(user) {
 
                     // Allocate an API token if requested
                     if(req.payload.allocate_api_token == true) {
                         req.log.debug("Allocating an API token as requested");
-                        return Applications.getByKey(req.payload.app_key).then(function(app) {
+                        return Applications.model.getByKey(req.payload.app_key).then(function(app) {
                             if(app) {
                                 req.log.debug("Loaded application", app.key);
 
                                 var tokenOptions = config.get('plugins:security:token_options') || { roles: ['user'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' }
                                 tokenOptions.subject = user.username;
 
-                                return Tokens.allocateToken(user, app, tokenOptions).then(function(tok) {
+                                return Tokens.model.allocateToken(user, app, tokenOptions).then(function(tok) {
                                     req.log.debug("API Token %s was successfully allocated", tok.token);
                                     user.api_token = tok.token;
                                     req.auth.session.set(user);
@@ -48,7 +48,10 @@ module.exports = function(server) {
                             }
                             else {
                                 server.log(['plugin', 'user', 'error'], "Application not found..."+req.payload.app_key);
-                                reply(Boom.unauthorized());
+                                reply.view('login',  _.merge(ctx, {
+                                    target_url: req.query.next,
+                                    error: Boom.unauthorized()
+                                }));
                             }
                         });
                     }
@@ -59,7 +62,10 @@ module.exports = function(server) {
                 }
                 else {
                     server.log(['plugin', 'user', 'error'], "User not found...");
-                    reply(Boom.unauthorized());
+                    reply.view('login',  _.merge(ctx, {
+                        target_url: req.query.next,
+                        error: Boom.unauthorized()
+                    }));
                 }
 
             }).catch(function(err) {

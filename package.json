@@ -6,6 +6,7 @@
     "boom": "^2.8.0",
     "calibrate": "^2.0.2",
     "handlebars": "^3.0.3",
+    "jsonwebtoken": "^5.0.4",
     "lodash": "^3.10.1"
   }
 }

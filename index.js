@@ -32,7 +32,7 @@ exports.register = function (server, options, next) {
         server.expose('Applications', require('./lib/applications')(server, log, config));
         server.expose('Tokens', require('./lib/tokens')(server, log, config));
 
-        server.auth.strategy('simple', 'basic', require('./lib/basic_validate')(server, log, config));
+        server.auth.strategy('simple', 'basic', { validateFunc: require('./lib/basic_validate')(server, log, config) });
 
         // Register our auth strategy
         server.auth.strategy('token', 'bearer-access-token', { validateFunc: require('./lib/validate_token')(server, log, config)});
