@@ -1,0 +1,11 @@
+{
+  "name": "covistra-security",
+  "version": "0.1.0",
+  "dependencies": {
+    "bluebird": "^2.9.34",
+    "boom": "^2.8.0",
+    "calibrate": "^2.0.2",
+    "handlebars": "^3.0.3",
+    "lodash": "^3.10.1"
+  }
+}
