@@ -1,3 +1,4 @@
+var path = require('path');
 
 module.exports = {
     menus:[{
@@ -7,7 +8,22 @@ module.exports = {
             state:'admin.users'
         }]
     }],
-    states:{},
-    controllers:{},
-    templates:{}
+    states: require('./users-states'),
+    controllers:{
+        UsersCtrl: require('./users-ctrl')
+    },
+    resources: {
+        Users: {
+            endpoint: 'users/{username}',
+            methods: '*'
+        }
+    },
+    services:{
+        CMBF: 'CMBF'
+    },
+    templates:{
+        users: {
+            home: path.resolve(__dirname, "templates/users/home.html")
+        }
+    }
 };
