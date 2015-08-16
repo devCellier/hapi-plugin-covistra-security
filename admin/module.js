@@ -9,8 +9,8 @@ module.exports = {
         }]
     }],
     states: require('./users-states'),
-    controllers:{
-        UsersCtrl: require('./users-ctrl')
+    controllers: {
+        AdminUsersCtrl: require('./users-ctrl')
     },
     resources: {
         Users: {
@@ -21,9 +21,7 @@ module.exports = {
     services:{
         CMBF: 'CMBF'
     },
-    templates:{
-        users: {
-            home: path.resolve(__dirname, "templates/users/home.html")
-        }
+    views: {
+        "users/home": path.resolve(__dirname, "templates/users/home.html")
     }
 };

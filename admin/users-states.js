@@ -2,7 +2,7 @@ var path = require('path');
 
 module.exports = {
     'admin.users': {
-        url: 'users',
+        url: 'admin/users',
         controller: 'AdminUsersCtrl',
         templateUrl: 'users/home',
         resolve: {
