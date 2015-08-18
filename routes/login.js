@@ -37,7 +37,7 @@ module.exports = function(server) {
                             if(app) {
                                 req.log.debug("Loaded application", app.key);
 
-                                var tokenOptions = config.get('plugins:security:token_options') || { roles: ['user'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' }
+                                var tokenOptions = config.get('plugins:security:token_options') || { roles: ['covistra-security'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' }
                                 tokenOptions.subject = user.username;
 
                                 return Tokens.model.allocateToken(user, app, tokenOptions).then(function(tok) {
