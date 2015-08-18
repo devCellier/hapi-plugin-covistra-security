@@ -8,7 +8,7 @@ var P = require('bluebird'),
 
 module.exports = function (server) {
 
-    var Applications = server.plugins['covistra.security'].Applications;
+    var Applications = server.plugins['covistra-security'].Applications;
 
     function handler(req, reply) {
         server.log(['plugin', 'users', 'debug'], "Users:Route:deleteApplications", req.payload);
