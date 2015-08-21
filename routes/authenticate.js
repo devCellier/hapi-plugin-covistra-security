@@ -17,7 +17,7 @@
 var Boom = require('boom'),
     Calibrate = require('calibrate');
 
-module.exports = function(server) {
+module.exports = function(server, log, config) {
     var Tokens = server.plugins['covistra-security'].Tokens.model;
     var Applications = server.plugins['covistra-security'].Applications.model;
 
