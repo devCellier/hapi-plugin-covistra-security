@@ -16,14 +16,22 @@
  */
 "use strict";
 
-var Calibrate = require('calibrate');
+var Calibrate = require('calibrate'),
+    Boom = require('boom'),
+    _ = require('lodash');
 
 module.exports = function (server) {
 
     var Users = server.plugins['covistra-security'].Users.model;
 
     function handler(req, reply) {
-        return Users.getByUsername(req.auth.credentials.bearer.username).then(Calibrate.response).catch(Calibrate.error).then(reply);
+        var username = _.get(req.auth, 'credentials.bearer.username');
+        if(username) {
+            return Users.getByUsername(username).then(Calibrate.response).catch(Calibrate.error).then(reply);
+        }
+        else {
+            reply(Boom.unauthorized());
+        }
     }
 
     return {
