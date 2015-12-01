@@ -55,6 +55,7 @@ module.exports = function(server) {
 
                                 var tokenOptions = config.get('plugins:security:token_options') || { roles: ['covistra-security'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' }
                                 tokenOptions.subject = user.username;
+                                tokenOptions.audience = tokenOptions.audience || app.key;
 
                                 return Tokens.model.allocateToken(user, app, tokenOptions).then(function(tok) {
                                     req.log.debug("API Token %s was successfully allocated", tok.token);
