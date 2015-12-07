@@ -14,7 +14,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-var jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken'),
+    Boom = require('boom'),
+    Calibrate = require('calibrate');
 
 module.exports = function(server) {
     var Applications = server.plugins['covistra-security'].Applications.model;
@@ -22,25 +24,22 @@ module.exports = function(server) {
 
     function handler(req, reply) {
         req.log.debug("Looking for application %s",req.headers['x-app-key']);
-        Applications.findOne({key: req.headers['x-app-key']}, function(err, app) {
-            if(err) {
-                reply({valid: false, reason: err});
-            }
-            else if(app) {
-                config =
-                jwt.verify(req.params.token, app.secret, { audience: app.key, issuer: 'cellars.io'}, function(err, decoded) {
-                    if(err) {
-                        return reply({valid: false, reason: err});
-                    }
-                    else {
-                        reply({valid: true, profile:decoded});
-                    }
+        return Applications.getByKey(req.headers['x-app-key']).then(function(app) {
+            if(app) {
+                var tokenOptions = config.get('plugins:security:token_options', { roles: ['covistra-security'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' });
+                return P.promisify(jwt.verify, jwt)(req.params.token, app.secret, { audience: app.key, issuer: tokenOptions.issuer }).then(function(decoded){
+                    return {
+                        valid: true,
+                        profile: decoded
+                    };
+                }).catch(function() {
+                    throw Boom.badRequest('invalid-token');
                 });
             }
             else {
-                reply({valid: false, reason: 'invalid-app-key'});
+                throw Boom.badRequest('invalid-app-key');
             }
-        });
+        }).catch(Calibrate.error).then(reply);
     }
 
     return {
