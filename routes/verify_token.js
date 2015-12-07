@@ -16,6 +16,7 @@
  */
 var jwt = require('jsonwebtoken'),
     Boom = require('boom'),
+    P = require('bluebird'),
     Calibrate = require('calibrate');
 
 module.exports = function(server) {
