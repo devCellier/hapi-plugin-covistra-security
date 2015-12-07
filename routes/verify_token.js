@@ -34,7 +34,7 @@ module.exports = function(server) {
                         profile: decoded
                     };
                 }).catch(function() {
-                    throw Boom.badRequest('invalid-token');
+                    throw Boom.unauthorized('invalid-token');
                 });
             }
             else {
