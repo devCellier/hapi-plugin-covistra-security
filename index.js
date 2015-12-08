@@ -28,15 +28,19 @@ exports.register = function (server, options, next) {
 
     log.debug("Registering the security plugin");
 
+    var tokenBuilders = [];
+
     server.expose('Users', require('./lib/users')(server, log, config));
     server.expose('Groups', require('./lib/groups')(server, log, config));
     server.expose('Applications', require('./lib/applications')(server, log, config));
     server.expose('Tokens', require('./lib/tokens')(server, log, config));
 
+    server.expose('registerTokenBuilder', require('./lib/register-token-builder')(server, tokenBuilders));
+
     server.auth.strategy('simple', 'basic', { validateFunc: require('./lib/basic_validate')(server, log, config) });
 
     // Register our auth strategy
-    server.auth.strategy('token', 'bearer-access-token', { validateFunc: require('./lib/validate_token')(server, log, config)});
+    server.auth.strategy('token', 'bearer-access-token', { validateFunc: require('./lib/validate_token')(server, log, config, tokenBuilders)});
 
     // Set our strategy
     server.auth.strategy('session', 'cookie', _.defaults(config.get('plugins:security:session') || {}, {
