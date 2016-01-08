@@ -27,17 +27,21 @@ module.exports = function(server) {
         req.log.debug("Looking for application %s",req.headers['x-app-key']);
         return Applications.getByKey(req.headers['x-app-key']).then(function(app) {
             if(app) {
+                req.log.debug("Application %s will be used to authenticate this request", app.name);
                 var tokenOptions = config.get('plugins:security:token_options', { roles: ['covistra-security'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' });
                 return P.promisify(jwt.verify, jwt)(req.params.token, app.secret, { audience: app.key, issuer: tokenOptions.issuer }).then(function(decoded){
+                    req.log.debug("Token was successfully verified");
                     return {
                         valid: true,
                         profile: decoded
                     };
-                }).catch(function() {
+                }).catch(function(err) {
+                    req.log.error(err);
                     throw Boom.unauthorized('invalid-token');
                 });
             }
             else {
+                req.log.error("application %s wasn't found", req.headers['x-app-key']);
                 throw Boom.badRequest('invalid-app-key');
             }
         }).catch(Calibrate.error).then(reply);
