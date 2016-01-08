@@ -28,7 +28,7 @@ module.exports = function(server) {
         return Applications.getByKey(req.headers['x-app-key']).then(function(app) {
             if(app) {
                 req.log.debug("Application %s will be used to authenticate this request", app.name);
-                var tokenOptions = config.get('plugins:security:token_options', { roles: ['covistra-security'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' });
+                var tokenOptions = config.get('plugins:security:token_options', { roles: ['covistra-security'], expiresIn: 30 * 24 * 60 * 60, audience: app.key, issuer: 'cmbf' });
                 return P.promisify(jwt.verify, jwt)(req.params.token, app.secret, { audience: app.key, issuer: tokenOptions.issuer }).then(function(decoded){
                     req.log.debug("Token was successfully verified");
                     return {
