@@ -40,10 +40,10 @@ module.exports = function (server) {
                     email: Joi.string().email().required(),
                     password: Joi.string().min(6).regex(/[a-zA-Z0-9]{6,30}/).required(),
                     lang: Joi.string().allow('').optional().default('en'),
-                    phone: Joi.string(),
-                    first_name: Joi.string(),
-                    last_name: Joi.string(),
-                    welcome_email: Joi.string(),
+                    phone: Joi.string().allow(''),
+                    first_name: Joi.string().allow(''),
+                    last_name: Joi.string().allow(''),
+                    welcome_email: Joi.string().allow(''),
                     opt_in: Joi.boolean().default(true)
                 })
             }
