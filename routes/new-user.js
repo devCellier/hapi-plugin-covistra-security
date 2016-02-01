@@ -44,7 +44,8 @@ module.exports = function (server) {
                     first_name: Joi.string().allow(''),
                     last_name: Joi.string().allow(''),
                     welcome_email: Joi.string().allow(''),
-                    opt_in: Joi.boolean().default(true)
+                    opt_in: Joi.boolean().default(true),
+                    groups: Joi.array()
                 })
             }
         }
