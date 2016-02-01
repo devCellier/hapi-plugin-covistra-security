@@ -38,7 +38,13 @@ module.exports = function (server) {
                 payload: Joi.object().keys({
                     username: Joi.string().required(),
                     email: Joi.string().email().required(),
-                    password: Joi.string().min(6).regex(/[a-zA-Z0-9]{6,30}/).required()
+                    password: Joi.string().min(6).regex(/[a-zA-Z0-9]{6,30}/).required(),
+                    lang: Joi.string().allow('').optional().default('en'),
+                    phone: Joi.string(),
+                    first_name: Joi.string(),
+                    last_name: Joi.string(),
+                    welcome_email: Joi.string(),
+                    opt_in: Joi.boolean().default(true)
                 })
             }
         }
