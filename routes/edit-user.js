@@ -33,7 +33,7 @@ module.exports = function (server) {
             Users.model.update(req.params.username, req.payload).then(Calibrate.response).catch(Calibrate.error).then(reply);
         }
         else {
-            reply(new Error("not-enough-permissions")).statusCode(403);
+            reply(403, new Error("not-enough-permissions"));
         }
 
     }
