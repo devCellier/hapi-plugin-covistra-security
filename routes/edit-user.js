@@ -29,7 +29,7 @@ module.exports = function (server) {
     function handler(req, reply) {
         server.log(['plugin', 'users', 'debug'], "Users:Route:editUsers", req.payload);
 
-        if(req.auth.credentials.emitter.username === req.params.username || _.contains(req.auth.credentials.token.scope, "group:admin") ) {
+        if(req.auth.credentials.emitter.username === req.params.username || _.contains(req.auth.credentials.token.roles, "admin") ) {
             Users.model.update(req.params.username, req.payload).then(Calibrate.response).catch(Calibrate.error).then(reply);
         }
         else {

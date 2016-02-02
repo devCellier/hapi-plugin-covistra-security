@@ -28,7 +28,11 @@ module.exports = function (server) {
 
     function handler(req, reply) {
         server.log(['plugin', 'users', 'debug'], "Users:Route:deleteUsers", req.payload);
-        Users.model.delete(req.params.username).then(Calibrate.response).catch(Calibrate.error).then(reply);
+
+        if(_.contains(req.auth.credentials.token.roles, "admin") ) {
+            return Users.model.delete(req.params.username).then(Calibrate.response).catch(Calibrate.error).then(reply);
+        }
+
     }
 
     return {

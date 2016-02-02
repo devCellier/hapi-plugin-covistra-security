@@ -28,7 +28,9 @@ module.exports = function (server) {
 
     function handler(req, reply) {
         server.log(['plugin', 'users', 'debug'], "Users:Route:deleteApplications", req.payload);
-        Applications.model.delete(req.params.key).then(Calibrate.response).catch(Calibrate.error).then(reply);
+        if(_.contains(req.auth.credentials.token.roles, "admin") ) {
+            Applications.model.delete(req.params.key).then(Calibrate.response).catch(Calibrate.error).then(reply);
+        }
     }
 
     return {
