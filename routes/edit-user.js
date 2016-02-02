@@ -24,13 +24,16 @@ var P = require('bluebird'),
 
 module.exports = function (server) {
 
-    var Users = server.plugins['covistra-security'].Users.model;
+    var Users = server.plugins['covistra-security'].Users;
 
     function handler(req, reply) {
         server.log(['plugin', 'users', 'debug'], "Users:Route:editUsers", req.payload);
 
         if(req.auth.credentials.emitter.username === req.params.username || _.contains(req.auth.credentials.token.token.roles, "admin") ) {
-            Users.model.update(req.params.username, req.payload).then(Calibrate.response).catch(Calibrate.error).then(reply);
+
+            return Users.model.getByUsername(req.params.username).then(function(user) {
+                return user.update(req.payload)
+            }).then(Calibrate.response).catch(Calibrate.error).then(reply);
         }
         else {
             reply(403, new Error("not-enough-permissions"));
