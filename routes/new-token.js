@@ -39,14 +39,23 @@ module.exports = function(server, log, config) {
     function handler(req, reply) {
 
         var tokenOptions = config.get('plugins:security:token_options', { groups: [], expiresIn: 30 * 24 * 60 * 60, audience: req.auth.credentials.application.key, issuer: 'cmbf' });
+
         tokenOptions.groups = req.payload.groups;
         tokenOptions.expiresIn = _computeExpiration(req.payload.expiration, tokenOptions.expiresIn);
-        tokenOptions.subject = req.auth.credentials.emitter.username;
         tokenOptions.audience = req.auth.credentials.application.key;
         tokenOptions.permissions = req.payload.permissions;
-        tokenOptions.bearer = req.payload.bearer;
         tokenOptions.usageCount =_computeUsage(req.payload.expiration);
         tokenOptions.parent = req.auth.credentials.token.token;
+
+        // Only admin can create a token for someone else without his acknowledgement
+        if(_.contains(req.auth.credentials.token.token.roles, "admin")) {
+            tokenOptions.subject = req.payload.emitter || req.auth.credentials.emitter.username;
+            tokenOptions.bearer = req.payload.bearer || req.auth.credentials.bearer;
+        }
+        else {
+            tokenOptions.subject = req.auth.credentials.emitter.username;
+            tokenOptions.bearer = req.payload.bearer;
+        }
 
         return Tokens.allocateToken(req.auth.credentials.emitter, req.auth.credentials.application, tokenOptions ).then(function(tok) {
             req.log.debug("Token was successfully allocated for user", req.auth.credentials.emitter.username);
