@@ -16,6 +16,7 @@
  */
 var Boom = require('boom'),
     _ = require('lodash'),
+    P = require('bluebird'),
     Calibrate = require('calibrate');
 
 module.exports = function(server, log, config) {
@@ -23,6 +24,7 @@ module.exports = function(server, log, config) {
 
     var Tokens = server.plugins['covistra-security'].Tokens.model;
     var Applications = server.plugins['covistra-security'].Applications.model;
+    var Users = server.plugins['covistra-security'].Users.model;
 
     function _computeExpiration(expirationSpec, defaultExpiresInSecond) {
         if(expirationSpec && expirationSpec.type === 'time') {
@@ -50,17 +52,26 @@ module.exports = function(server, log, config) {
 
         // Only admin can create a token for someone else without his acknowledgement
         if(_.contains(req.auth.credentials.token.token.roles, "admin")) {
-            tokenOptions.subject = req.payload.emitter || req.auth.credentials.emitter.username;
-            tokenOptions.bearer = req.payload.bearer || req.auth.credentials.bearer;
+            req.log.debug("Overriding emitter allowed", req.payload.emitter|| req.auth.credentials.emitter._id);
+            if(req.payload.emitter) {
+                tokenOptions.subject = Users.getByUsername(req.payload.emitter);
+            }
+            else {
+                tokenOptions.subject = req.auth.credentials.emitter._id;
+            }
         }
         else {
-            tokenOptions.subject = req.auth.credentials.emitter.username;
-            tokenOptions.bearer = req.payload.bearer;
+            tokenOptions.subject = req.auth.credentials.emitter._id;
         }
+        tokenOptions.bearer = req.auth.credentials.bearer._id;
 
-        return Tokens.allocateToken(req.auth.credentials.emitter, req.auth.credentials.application, tokenOptions ).then(function(tok) {
-            req.log.debug("Token was successfully allocated for user", req.auth.credentials.emitter.username);
-            return {token: tok.token};
+        return P.props(tokenOptions).then(function(opts) {
+            var emitter = opts.subject || req.auth.credentials.emitter;
+            opts.subject = emitter._id;
+            return Tokens.allocateToken(emitter, req.auth.credentials.application, opts).then(function(tok) {
+                req.log.debug("Token was successfully allocated for user", req.auth.credentials.emitter.username);
+                return {token: tok.token};
+            });
         }).then(Calibrate.response).catch(Calibrate.error).then(reply);
 
     }
