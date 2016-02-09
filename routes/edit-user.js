@@ -51,6 +51,7 @@ module.exports = function (server) {
                     email : Joi.string().email(),
                     first_name : Joi.string(),
                     last_name : Joi.string(),
+                    password: Joi.string(),
                     groups : Joi.array().items(Joi.string()),
                     opt_in : Joi.boolean(),
                     phone : Joi.string(),
