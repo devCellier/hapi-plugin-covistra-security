@@ -57,11 +57,11 @@ module.exports = function(server, log, config) {
                 tokenOptions.subject = Users.getByUsername(req.payload.emitter);
             }
             else {
-                tokenOptions.subject = req.auth.credentials.emitter._id;
+                tokenOptions.subject = req.auth.credentials.emitter;
             }
         }
         else {
-            tokenOptions.subject = req.auth.credentials.emitter._id;
+            tokenOptions.subject = req.auth.credentials.emitter;
         }
         tokenOptions.bearer = req.auth.credentials.bearer._id;
 

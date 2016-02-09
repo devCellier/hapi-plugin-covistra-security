@@ -30,7 +30,7 @@ module.exports = function(server, log, config) {
                 req.log.debug("Found app", app);
 
                 var tokenOptions = config.get('plugins:security:token_options', { roles: ['covistra-security'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' });
-                tokenOptions.subject = req.auth.credentials.username;
+                tokenOptions.subject = req.auth.credentials._id;
                 tokenOptions.audience = tokenOptions.audience || app.key;
 
                 return Tokens.allocateToken(req.auth.credentials, app, tokenOptions ).then(function(tok) {
