@@ -27,7 +27,9 @@ module.exports = function (server) {
     function handler(req, reply) {
         var username = _.get(req.auth, 'credentials.bearer.username');
         if(username) {
-            return Users.getByUsername(username).then(Calibrate.response).catch(Calibrate.error).then(reply);
+            return Users.getByUsername(username).then(function(user) {
+                return _.omit(user, "password", "confirm_secret");
+            }).then(Calibrate.response).catch(Calibrate.error).then(reply);
         }
         else {
             reply(Boom.unauthorized());

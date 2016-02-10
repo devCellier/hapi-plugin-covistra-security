@@ -17,6 +17,7 @@
 "use strict";
 
 var Calibrate = require('calibrate'),
+    _ = require('lodash'),
     Joi = require('joi');
 
 module.exports = function (server) {
@@ -27,7 +28,7 @@ module.exports = function (server) {
         server.log(['plugin', 'users', 'debug'], "Users:Route:getUser", req.params);
         if(req.params.username === 'me') {
             return Users.getByUsername(req.auth.credentials.bearer.username).then(function(user) {
-              reply(user.toJSON());
+              reply(_.omit(user, "password", "confirm_secret"));
             }).catch(Calibrate.error);
         }
         else {
