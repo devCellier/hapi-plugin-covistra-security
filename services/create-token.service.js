@@ -9,7 +9,11 @@ module.exports = function(server) {
      *
      */
     var service = function(msg) {
-        return Tokens.model.allocateToken(msg.user, msg.app, msg.options);
+        return Tokens.model.allocateToken(msg.user, msg.app, msg.options).then(function(tok){
+            if(tok) {
+                return tok.toJSON();
+            }
+        });
     };
 
     return {

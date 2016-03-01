@@ -9,7 +9,11 @@ module.exports = function(server) {
      *
      */
     var service = function(msg) {
-        return Users.model.authenticate(msg.credentials);
+        return Users.model.authenticate(msg.credentials).then(function(user) {
+            if(user) {
+                return user.toJSON();
+            }
+        });
     };
 
     return {

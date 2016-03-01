@@ -9,7 +9,11 @@ module.exports = function(server) {
      *
      */
     var service = function(msg) {
-        return Applications.model.getByKey(msg.app);
+        return Applications.model.getByKey(msg.app).then(function(app){
+            if(app) {
+                return app.toJSON();
+            }
+        });
     };
 
     return {
