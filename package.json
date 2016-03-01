@@ -1,6 +1,6 @@
 {
   "name": "covistra-security",
-  "version": "1.2.1-pre",
+  "version": "1.2.1",
   "dependencies": {
     "bluebird": "^2.9.34",
     "boom": "^2.8.0",
