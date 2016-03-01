@@ -25,6 +25,7 @@ exports.register = function (server, options, next) {
     var log = server.plugins['covistra-system'].systemLog.child({plugin: 'security'});
     var Router = server.plugins['covistra-system'].Router;
     var resolveDeps = server.plugins['covistra-system'].resolveDeps;
+    var Services = server.plugins['covistra-system'].Services;
 
     log.debug("Registering the security plugin");
 
@@ -66,6 +67,9 @@ exports.register = function (server, options, next) {
     // Register routes
     Router.routes(server, __dirname, './routes');
 
+    // Register all services
+    Services.discover(__dirname, "services");
+
     // Lazy plugin resolution to avoid circular dependencies issue
     resolveDeps('covistra-admin').then(function(adminPlugin) {
         log.debug("Installing our admin interface");
@@ -76,7 +80,7 @@ exports.register = function (server, options, next) {
         log.info("Security Admin interface has been successfully installed");
 
     }).catch(function() {
-        log.warn("Unable to resolve admin plugin. No interface will be created");
+        log.debug("Unable to resolve admin plugin. No interface will be created");
     });
 
     //NOTE: Must call done before install the admin as security plugin is a dependency of admin plugin!
