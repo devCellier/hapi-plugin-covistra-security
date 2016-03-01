@@ -3,7 +3,7 @@ var Joi = require('joi');
 module.exports = function(server) {
     "use strict";
 
-    var Tokens = server.services['covistra-security'].Tokens;
+    var Tokens = server.plugins['covistra-security'].Tokens;
 
     /**
      *

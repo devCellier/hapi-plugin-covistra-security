@@ -3,7 +3,7 @@ var Joi = require('joi');
 module.exports = function(server) {
     "use strict";
 
-    var Users = server.services['covistra-security'].Users;
+    var Users = server.plugins['covistra-security'].Users;
 
     /**
      *
