@@ -1,4 +1,5 @@
 var Joi = require('joi'),
+    moment = require('moment'),
     Boom = require('boom');
 
 module.exports = function(server,config,log) {
@@ -44,6 +45,7 @@ module.exports = function(server,config,log) {
                             return server.service({role:'security', target:'token', action:'create', user: user, app: app, options: tokenOptions}).then(function(tok) {
                                 log.debug("API Token %s was successfully allocated", tok.token);
                                 session.api_token = tok.token;
+                                session.expireDate = moment().add(tokenOptions.expiresIn, 'minutes').toDate();
                                 return session;
                             });
                         }
