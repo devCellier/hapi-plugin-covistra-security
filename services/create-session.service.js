@@ -12,6 +12,8 @@ module.exports = function(server,config,log) {
     var service = function(msg) {
         log.debug("Authenticating user %s", msg.credentials.username);
 
+        msg.options = msg.options || {};
+
         // Perform the authentication
         return server.service({role:'security', target:'user', action:'authenticate', credentials: msg.credentials}).then(function(user) {
             var session = {};
@@ -25,12 +27,15 @@ module.exports = function(server,config,log) {
                 if(msg.options.allocate_api_token) {
                     log.debug("Allocating an API token as requested");
                     return server.service({role:'security', target:'application', action:'load', app: msg.options.app_key}).then(function(app) {
+                        console.log(app);
                         if(app) {
                             log.debug("Loaded application", app.key);
 
+                            session.app_key = app.key;
+
                             var tokenOptions = msg.options.tokenOpts;
                             if(!tokenOptions) {
-                                tokenOptions = config.get('plugins:security:token_options') || { roles: ['user'], expiresInMinutes: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' }
+                                tokenOptions = config.get('plugins:security:token_options') || { roles: ['user'], expiresIn: 30 * 24 * 60, audience: app.key, issuer: 'cmbf' }
                             }
 
                             tokenOptions.subject = user.username;
@@ -69,7 +74,7 @@ module.exports = function(server,config,log) {
                 app_key: Joi.string(),
                 tokenOpts: Joi.object().keys({
                     roles: Joi.array().items(Joi.string()),
-                    expiresInMinutes: Joi.number().default(30 * 24 * 60)
+                    expiresIn: Joi.number().default(30 * 24 * 60)
                 })
             }
         }),
