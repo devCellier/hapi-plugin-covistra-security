@@ -63,6 +63,7 @@ module.exports = function(server, log, config) {
         else {
             tokenOptions.subject = req.auth.credentials.emitter;
         }
+
         tokenOptions.bearer = req.auth.credentials.bearer._id;
 
         return P.props(tokenOptions).then(function(opts) {
