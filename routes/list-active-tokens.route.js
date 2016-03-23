@@ -23,8 +23,6 @@ var Joi = require('joi'),
 
 module.exports = function (server, log, config) {
 
-    var DEFAULT_TOKEN = config.get('server:documentation:default-token');
-
     function handler(req, reply) {
         var msg = _.assign({role:'security', target:'token', action:'list'}, req.query);
 
@@ -65,7 +63,7 @@ module.exports = function (server, log, config) {
                     aspects: Joi.string()
                 },
                 headers: Joi.object({
-                    'authorization': Joi.string().required().default('Bearer ' + DEFAULT_TOKEN)
+                    'authorization': Joi.string().required()
                 }).unknown()
             }
         }
