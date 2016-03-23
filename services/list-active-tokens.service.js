@@ -60,7 +60,7 @@ module.exports = function(server) {
             app: Joi.string().description('List tokens for a specific app only. App key should be provided.'),
             bearer: Joi.string(),
             emitter: Joi.string(),
-            aspects: Joi.array().items(Joi.string()).optional()
+            aspects: Joi.any().optional().description('Array of string or coma-separated list of aspect keys')
         }),
         route: {
             method: 'GET',
