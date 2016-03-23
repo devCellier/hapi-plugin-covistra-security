@@ -16,11 +16,8 @@
  */
 "use strict";
 
-var P = require('bluebird'),
-    Calibrate = require('calibrate'),
-    Joi = require('joi'),
-    Boom = require('boom'),
-    _ = require('lodash');
+var Calibrate = require('calibrate'),
+    Joi = require('joi');
 
 module.exports = function (server) {
 

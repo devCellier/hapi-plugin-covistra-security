@@ -15,6 +15,7 @@
  limitations under the License.
  */
 var Boom = require('boom'),
+    Joi = require('joi'),
     Calibrate = require('calibrate');
 
 module.exports = function(server, log, config) {
