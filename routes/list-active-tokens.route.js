@@ -21,7 +21,7 @@ var Joi = require('joi'),
     trim = require('trim'),
     _ = require('lodash');
 
-module.exports = function (server, config) {
+module.exports = function (server, log, config) {
 
     var DEFAULT_TOKEN = config.get('server:documentation:default-token');
 
