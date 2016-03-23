@@ -1,7 +1,6 @@
 var Joi = require('joi');
 var P = require('bluebird');
 var _ = require('lodash');
-var trim = require('trim');
 
 module.exports = function(server) {
     "use strict";
@@ -18,11 +17,6 @@ module.exports = function(server) {
         return Tokens.model.listTokens(msg.app, msg.bearer, msg.emitter).then(function(tokens) {
 
             if(msg.aspects) {
-
-                // Process coma-separated aspect list
-                if(_.isString(msg.aspects)) {
-                    msg.aspects = _.map(msg.aspects.split(','), function(aspect) { return trim(aspect.toLowerCase())});
-                }
 
                 return P.map(tokens, function(token) {
                     if(msg.aspects.indexOf('bearer') !== -1) {
@@ -60,24 +54,8 @@ module.exports = function(server) {
             app: Joi.string().description('List tokens for a specific app only. App key should be provided.'),
             bearer: Joi.string(),
             emitter: Joi.string(),
-            aspects: Joi.any().optional().description('Array of string or coma-separated list of aspect keys')
+            aspects: Joi.array().items(Joi.string()).optional().description('Supported aspects: bearer,application,emitter')
         }),
-        route: {
-            method: 'GET',
-            path: '/tokens',
-            config:{
-                tags: ['api'],
-                description: 'List Tokens',
-                validate: {
-                    query: {
-                        app: Joi.string(),
-                        bearer: Joi.string(),
-                        emitter: Joi.string(),
-                        aspects: Joi.string()
-                    }
-                }
-            }
-        },
         callback: service
     }
 };
