@@ -65,12 +65,16 @@ module.exports = function(server) {
         route: {
             method: 'GET',
             path: '/tokens',
-            validate: {
-                query: {
-                    app: Joi.string(),
-                    bearer: Joi.string(),
-                    emitter: Joi.string(),
-                    aspects: Joi.string()
+            config:{
+                tags: ['api'],
+                description: 'List Tokens',
+                validate: {
+                    query: {
+                        app: Joi.string(),
+                        bearer: Joi.string(),
+                        emitter: Joi.string(),
+                        aspects: Joi.string()
+                    }
                 }
             }
         },
