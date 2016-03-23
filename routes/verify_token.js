@@ -17,6 +17,7 @@
 var jwt = require('jsonwebtoken'),
     Boom = require('boom'),
     P = require('bluebird'),
+    Joi = require('joi'),
     Calibrate = require('calibrate');
 
 module.exports = function(server) {
@@ -52,7 +53,12 @@ module.exports = function(server) {
         path: '/auth/verify/{token}',
         handler: handler,
         config: {
-            tags: ['api', 'security']
+            tags: ['api', 'security'],
+            validate: {
+                params: {
+                    token: Joi.string()
+                }
+            }
         }
     }
 };
