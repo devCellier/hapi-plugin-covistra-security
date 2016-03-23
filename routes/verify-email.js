@@ -57,7 +57,7 @@ module.exports = function(server) {
         path: '/verify/{username}/{validation_code}',
         handler: handler,
         config: {
-            tags: ['api'],
+            tags: ['api', 'security'],
             validate: {
                 params: {
                     username: Joi.string().required(),

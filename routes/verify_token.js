@@ -52,7 +52,7 @@ module.exports = function(server) {
         path: '/auth/verify/{token}',
         handler: handler,
         config: {
-            tags: ['api']
+            tags: ['api', 'security']
         }
     }
 };

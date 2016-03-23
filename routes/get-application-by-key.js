@@ -30,12 +30,15 @@ module.exports = function(server) {
     }
 
     return { method: 'GET', path: '/applications/{key}', handler: handler, config:{
-        tags: ['api'],
+        tags: ['api', 'security'],
         description: "Retrieve a specific application",
         validate:{
             params: {
                 key: Joi.string().required()
-            }
+            },
+            headers: Joi.object({
+                'authorization': Joi.string().required().description('A Bearer token value')
+            }).unknown()
         }
     }};
 };

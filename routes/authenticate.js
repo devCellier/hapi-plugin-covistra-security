@@ -51,8 +51,14 @@ module.exports = function(server, log, config) {
         path: '/auth/token',
         handler: handler,
         config: {
-            tags: ['api'],
-            auth: 'simple'
+            tags: ['api', 'security'],
+            auth: 'simple',
+            validate: {
+                headers: Joi.object({
+                    'x-app-key': Joi.string().required().description('The App key for which the token will be created'),
+                    'authorization': Joi.string().required().description('A standard HTTP BASIC Auth header value')
+                }).unknown()
+            }
         }
     };
 

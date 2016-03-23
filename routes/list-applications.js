@@ -33,9 +33,14 @@ module.exports = function (server) {
 
     return {
         method: 'GET', path: '/applications', handler: handler, config: {
-            tags: ['api', 'restricted'],
+            tags: ['api', 'security'],
             description: "List all applications in the system. Limited to staff",
-            auth: 'token'
+            auth: 'token',
+            validate: {
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
+            }
         }
     };
 };

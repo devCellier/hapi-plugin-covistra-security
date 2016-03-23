@@ -16,11 +16,8 @@
  */
 "use strict";
 
-var P = require('bluebird'),
-    Calibrate = require('calibrate'),
-    Joi = require('joi'),
-    Boom = require('boom'),
-    _ = require('lodash');
+var Calibrate = require('calibrate'),
+    Joi = require('joi');
 
 module.exports = function (server) {
 
@@ -33,9 +30,14 @@ module.exports = function (server) {
 
     return {
         method: 'POST', path: '/applications', handler: handler, config: {
-            tags: ['api', 'restricted'],
+            tags: ['api', 'security'],
             description: "Create an application in the system. Limited to staff",
-            auth: 'token'
+            auth: 'token',
+            validate: {
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
+            }
         }
     };
 };

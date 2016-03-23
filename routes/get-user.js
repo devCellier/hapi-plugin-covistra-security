@@ -42,12 +42,15 @@ module.exports = function (server) {
         method: 'GET', path: '/users/{username}', handler: handler, config: {
             description: "Get public information about any member",
             notes: "This method return a subset of the user information",
-            tags: ['api'],
+            tags: ['api','security'],
             auth: 'token',
             validate: {
                 params: {
                     username: Joi.string().required()
-                }
+                },
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
             },
             response: {
                 schema: {

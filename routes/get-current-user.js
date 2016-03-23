@@ -18,6 +18,7 @@
 
 var Calibrate = require('calibrate'),
     Boom = require('boom'),
+    Joi = require('joi'),
     _ = require('lodash');
 
 module.exports = function (server) {
@@ -39,9 +40,14 @@ module.exports = function (server) {
     return {
         method: 'GET', path: '/user', handler: handler, config: {
             auth: 'token',
-            tags: ['api'],
+            tags: ['api', 'security'],
             description: "Get the full profile of the current user",
-            notes: "Current user is determine by the token (bearer)"
+            notes: "Current user is determine by the token (bearer)",
+            validate: {
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
+            }
         }
     };
 };

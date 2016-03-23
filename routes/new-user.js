@@ -32,7 +32,7 @@ module.exports = function (server) {
 
     return {
         method: 'POST', path: '/users', handler: handler, config: {
-            tags: ['api'],
+            tags: ['api', 'security'],
             description: "Create a user in the system",
             validate: {
                 payload: Joi.object().keys({
@@ -47,7 +47,10 @@ module.exports = function (server) {
                     opt_in: Joi.boolean().default(true),
                     groups: Joi.array(),
                     status: Joi.string().allow('')
-                })
+                }),
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
             }
         }
     };

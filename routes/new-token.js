@@ -14,9 +14,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-var Boom = require('boom'),
-    _ = require('lodash'),
+var _ = require('lodash'),
     P = require('bluebird'),
+    Joi = require('joi'),
     Calibrate = require('calibrate');
 
 module.exports = function(server, log, config) {
@@ -82,8 +82,13 @@ module.exports = function(server, log, config) {
         path: '/tokens',
         handler: handler,
         config: {
-            tags: ['api'],
-            auth: 'token'
+            tags: ['api', 'security'],
+            auth: 'token',
+            validate: {
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
+            }
         }
     };
 

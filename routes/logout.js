@@ -14,8 +14,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-var Calibrate = require('calibrate'),
-    Boom = require('boom');
 
 module.exports = function(server) {
 

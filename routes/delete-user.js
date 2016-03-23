@@ -37,9 +37,15 @@ module.exports = function (server) {
 
     return {
         method: 'DELETE', path: '/users/{username}', handler: handler, config: {
-            tags: ['api', 'restricted'],
+            tags: ['api', 'security'],
             description: "Delete a user in the system. Limited to staff",
-            auth: 'token'
+            auth: 'token',
+            validate: {
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
+            }
+
         }
     };
 };

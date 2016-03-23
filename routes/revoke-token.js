@@ -14,6 +14,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+var Joi = require('joi');
 
 module.exports = function(server) {
     var Tokens = server.plugins['covistra-security'].Tokens.model;
@@ -32,7 +33,12 @@ module.exports = function(server) {
         handler: handler,
         config: {
             auth: 'token',
-            tags: ['api']
+            tags: ['api', 'security'],
+            validate: {
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
+            }
         }
     }
 };

@@ -43,7 +43,7 @@ module.exports = function (server) {
 
     return {
         method: 'PUT', path: '/users/{username}', handler: handler, config: {
-            tags: ['api'],
+            tags: ['api', 'security'],
             description: "Edit a user in the system",
             auth: 'token',
             validate: {
@@ -57,7 +57,10 @@ module.exports = function (server) {
                     phone : Joi.string(),
                     status : Joi.string().allow('ACTIVE', 'INACTIVE'),
                     medias: Joi.array().items(Joi.string()).description('An array of Cloudinary public_id associated with this user account')
-                })
+                }),
+                headers: Joi.object({
+                    'authorization': Joi.string().required().description('A Bearer token value')
+                }).unknown()
             }
         }
     };
