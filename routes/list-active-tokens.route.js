@@ -21,8 +21,10 @@ var Joi = require('joi'),
     trim = require('trim'),
     _ = require('lodash');
 
-module.exports = function (server) {
-    
+module.exports = function (server, config) {
+
+    var DEFAULT_TOKEN = config.get('server:documentation:default-token');
+
     function handler(req, reply) {
         var msg = _.assign({role:'security', target:'token', action:'list'}, req.query);
 
@@ -52,7 +54,7 @@ module.exports = function (server) {
         path: '/tokens',
         handler: handler,
         config:{
-            tags: ['api'],
+            tags: ['api', 'security'],
             auth: 'token',
             description: 'List Tokens',
             validate: {
@@ -61,7 +63,10 @@ module.exports = function (server) {
                     bearer: Joi.string(),
                     emitter: Joi.string(),
                     aspects: Joi.string()
-                }
+                },
+                headers: Joi.object({
+                    'authorization': Joi.string().required().default('Bearer ' + DEFAULT_TOKEN)
+                }).unknown()
             }
         }
     };
