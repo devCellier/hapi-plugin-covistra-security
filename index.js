@@ -80,7 +80,7 @@ exports.register = function (server, options, next) {
         log.info("Security Admin interface has been successfully installed");
 
     }).catch(function() {
-        log.debug("Unable to resolve admin plugin. No interface will be created");
+        log.debug("Admin plugin not loaded. No interface will be created");
     });
 
     //NOTE: Must call done before install the admin as security plugin is a dependency of admin plugin!
