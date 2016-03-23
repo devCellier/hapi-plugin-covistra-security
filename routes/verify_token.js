@@ -60,7 +60,7 @@ module.exports = function(server) {
                 },
                 headers: Joi.object({
                     'x-app-key': Joi.string().required().description('The App key for which the token will be created')
-                })
+                }).unknown()
             }
         }
     }
